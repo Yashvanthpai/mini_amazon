@@ -1,0 +1,26 @@
+{% extends 'index.html' %}
+{% load crispy_forms_tags %}
+{% block body %}
+<link href="https://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet">
+<style>
+    #formid{
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        padding: 30px;
+        padding-bottom:0% ;
+        margin: auto;
+        border: 1px solid rgb(75, 72, 72);
+    }
+</style>
+      <strong>
+            <form id="formid" method="post" style="width: 45%;background-color:rgba(255, 255, 255, 0.658); margin-top:7%; ">
+                    <h3 style="text-align: center;padding: 2%; color: rgb(2, 2, 2);"><strong>Login Here</strong></h3>
+                          {% csrf_token %}
+                           {{ form|crispy }}
+                           <button type="submit" class="btn btn-success">Login</button>
+                           <p style="margin-top: 5%;text-align: right; color: rgb(7, 8, 7);padding-top:5% ">If you don't have account <a href="{% url 'register' %}" style="color: blue; text-decoration: none">SIGN UP</a></p> 
+                   </form>
+                  
+      </strong>
+    
+{% endblock %}
+

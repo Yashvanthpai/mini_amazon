@@ -1,0 +1,252 @@
+{% extends 'index.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load custum %}
+{% block navextra %}
+    {% if c_type == 'seller' %}
+     <strong>
+        <li class="nav-item"><a class='nav-link'href="#" onclick="openpostdiv()">Sale</a></li>
+    </strong>
+    {% endif %}
+    <strong>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-user" style="margin-right: 15px;"></i><strong>{{user.username}}</strong>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="{% url 'two' %}">Contact</a>
+                <a class="dropdown-item" href="{% url 'one' %}">About</a>
+                <a class="dropdown-item" href="{% url 'logout' %}">LOGOUT</a>
+            </div>
+        </li>
+    </strong>
+{% endblock %}
+{% block body %}
+<style>
+#imgdivs{
+              box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+              display: none;
+              position: fixed;
+              top: 2%;
+              left: 25%;
+            }
+</style>
+        {% for key, x in loop.items %}
+        {% if forloop.counter|modulus:3 == 1%}
+            <div class="row" style="margin-top: 10px;">
+        {% endif %}
+        <div class="col-4">
+              <div class="card" style=" margin: 3%; height: 100%">
+                  <img id='product_img' src="{{ x.product_img|location }}" class="card-img-top" style="width: 150px ;height: 150px;padding:5%; margin: auto" alt="No img">
+                  <div class="card-body">
+                    <p hidden id='product'>{{x.Product_name}}</p>
+                    <p hidden id='price'>{{x.product_price}}</p>
+                    <p hidden id='man'>{{x.product_man}}</p>
+                    <p class="card-text" id='details' style="height: 100%; overflow: auto; ">{{x.product_info}}</p>
+                  </div>
+                  <hr style="height: 1px;">
+                  <p style="text-align: center">
+                    <a href="#" class="btn btn-primary" style=" width: 25%; margin: auto;margin-bottom:10px; " onclick="product_edit(this)">Edit</a>
+                    <a href="#" class="btn btn-primary" style=" width: 30%; margin: auto;margin-bottom:10px; ">Remove</a>
+                    <a href="#" class="btn btn-primary" style=" width: 25%; margin: auto;margin-bottom:10px; " onclick="product_info(this)">Info</a>
+                </p>
+                </div>
+          </div>
+          {% if forloop.counter|modulus:3 == 0 %}
+            </div>
+          {% endif %} 
+          {% endfor %}
+
+
+          {% if loop|length|modulus:3 != 0 %}
+            </div>
+          {% endif %} 
+<div id="back_gg" onclick="closeform()">
+</div>
+<style>
+    #back_gg{
+      position:absolute;
+      background-color:rgba(240, 248, 255, 0.89); 
+      top: 0;
+      left: 0;
+      width: 100%;
+      display: none;
+}
+  </style> 
+
+<!--Product Information form-->
+<div class="container" id="imgdivs" style="width: 60%; margin:auto; background-color: rgba(255, 255, 255, 0.966);margin-bottom:70px;  ">
+    <button type="button" class="close" aria-label="Close" style="padding:2%;" onclick="closeform()">
+        <span aria-hidden="true">&times;</span>
+     </button>
+     <div style="width:35%;height: 35%; ;margin: auto;padding: 20px;" >
+        <img id="img_prof2" style="width: 90%; height: 100%; " src="" class="img-thumbnail" alt="Cinque Terre"> 
+    </div>
+    <hr>
+    <p style="text-align:left;font-size:30px;margin-left:2%;"><strong id='pro_name'>Iphone</strong><span style="float:right;font-size:30px" id='pro_price'>$77542</span>
+    </p>
+    <hr>
+    <div class="container" style="width: 75%; ">
+      <div class="row">
+        <div class="col-4" >
+            <p style="font-size: 20px;">Manufacturur</p>
+          </div>
+          <div class="col-8" >
+              <p style="font-size: 20px;" id='man_info'>Rnsit</p>
+           </div>
+        </div>
+        <div class="row">
+            <div class="col-4">
+                <p style="font-size: 20px;">Product Description</p>
+              </div>
+              <div class="col-8" >
+                  <p style="font-size: 20px;" id='pro_info'>This way it doesn't matter how much content you put inside your box/wrapper/div , it will make the page height bigger without having to change </p>
+               </div>
+            </div>
+     </div>
+     
+</div>
+<style>
+    #imgdivs{
+      background-color:rgb(255, 255, 255);
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      display: none;
+      position: fixed;
+      top: 5px;
+      left: 25%;
+      width: 70%;
+      height: 99%;
+      padding: 3%;
+        }
+</style>
+<script>
+function closeform(){
+      document.getElementById("back_gg").style.display = "none";
+      document.getElementById("imgdivs").style.display = "none";
+      document.getElementById("postdiv").style.display = "none";
+      document.getElementById("product_edit").style.display = "none";
+}
+function product_info(p) {
+  var arr=['#product_img','#product','#price','#man','#details'];
+  var key = ['img','product','price','man','info']
+  var val ={'img':'','product':'','price':'','man':'','info':''};
+  val[key[0]] = $($($(p).parent()).parent()).find(arr[0]).attr("src")
+  for (var i=1;i<arr.length;i++){
+      val[key[i]] = $($($(p).parent()).parent()).find(arr[i]).text()
+  }
+  console.log(val)
+  console.log($("body").height()+'px')
+   $("#back_gg").css("height", $("body").height()+'px');
+   document.getElementById("back_gg").style.display = "block";
+   document.getElementById("imgdivs").style.display = "block";
+  $("#img_prof2").attr("src",val['img'])
+  $("#pro_name").text(val["product"])
+  $("#pro_price").text(val["price"])
+  $("#pro_info").text(val["info"])
+  $("#man_info").text(val["man"])
+  
+}
+</script>
+
+<!--Product editform-->
+<div class="container" id="product_edit" >
+    <button type="button" class="close" aria-label="Close" style="padding:2%;" onclick="closeEform()">
+        <span aria-hidden="true">×</span>
+     </button>
+        <div class="container-fluid" style="width: 100; "> 
+            <h3 style="text-align: center; padding:0%;"><strong>Update Product</strong></h3>
+            <form id="formid" method="post" enctype="multipart/form-data" style=" padding: 3%;width:80%;margin: auto;background-color:rgb(255, 255, 255);">
+                <strong>
+                        {% csrf_token %}
+                        {{ form1|crispy }}
+                <button type="submit" class="btn btn-success">Update</button>
+                </strong>        
+                </form>
+        </div>   
+</div>
+<style>
+        #product_edit{
+        overflow: auto;
+        background-color:rgb(255, 255, 255);
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        display: none;
+        position: fixed;
+        top: 5px;
+        left: 15%;
+        width: 70%;
+        height: 100%;
+        padding: 3%;
+                }
+</style>
+    <script>
+            function closeEform(){
+              document.getElementById("back_gg").style.display = "none";
+              document.getElementById("product_edit").style.display = "none";
+            }
+            function product_edit(p) {
+              var arr=['#product_img','#product','#price','#man','#details'];
+              var key = ['img','product','price','man','info']
+              var val ={'img':'','product':'','price':'','man':'','info':''};
+              val[key[0]] = $($($(p).parent()).parent()).find(arr[0]).attr("src")
+              for (var i=1;i<arr.length;i++){
+                  val[key[i]] = $($($(p).parent()).parent()).find(arr[i]).text()
+              }
+              console.log("in edit")
+              console.log(val)
+              console.log($("body").height()+'px')
+               $("#back_gg").css("height", $("body").height()+'px');
+               document.getElementById("back_gg").style.display = "block";
+               document.getElementById("product_edit").style.display = "block";
+               setvalue(val)
+            }
+            function setvalue(x){
+              console.log("helocansc")
+              $("input[name=Eproduct_name]").val(x["product"])
+              $("input[name=Eproduct_name]").prop("readonly", true);
+              $("input[name=Eproduct_man]").val(x["man"]) 
+              $("input[name=Eproduct_man]").prop("readonly", true);
+              $("input[name=Eproduct_price]").val(parseInt(x["price"]))
+              $("textarea[name=Eproduct_info]").val(x["info"])
+            }
+            
+    </script>
+
+<!-- seller form -->
+{% if c_type == 'seller' %}
+<div id="postdiv">
+  <button type="button" class="close" aria-label="Close" style="padding:2%;" onclick="closeform()">
+        <span aria-hidden="true">&times;</span>
+  </button>
+  <form id="formid" method="post" enctype="multipart/form-data" style=" padding: 3%;width:70%;margin: auto;background-color:rgb(255, 255, 255);" >
+    <strong>
+        <h3 style="text-align: center; padding:0%;"><strong>Register Product</strong></h3>
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-success">Save</button>
+    </strong>        
+  </form>
+</div>
+
+<style>
+  #postdiv{
+    overflow: auto;
+    background-color:rgb(255, 255, 255);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    display: none;
+    position: fixed;
+    top: 5px;
+    left: 15%;
+    width: 70%;
+    height: 99%;
+    padding: 3%;
+  }
+</style>
+<script>
+function openpostdiv() {
+  $("#back_gg").css("height", $("body").height()+'px');
+  document.getElementById("back_gg").style.display = "block";
+  document.getElementById("postdiv").style.display = "block";
+}
+</script>
+{% endif %}
+{% endblock %}

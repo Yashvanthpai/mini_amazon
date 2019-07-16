@@ -2,23 +2,66 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">    <title>Database</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script
+    src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+    crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="/resources/demos/style.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Amazone</title>
+    <link href="https://fonts.googleapis.com/css?family=Fredericka+the+Great|Monoton&display=swap" rel="stylesheet">
+    <style>
+        nav li{
+            border: 3px solid rgb(238, 194, 197);
+            
+        }
+        nav{
+            font-family: 'Monoton', cursive;
+        }
+        nav li:hover {
+            color: black;
+            border-bottom: 3px solid black;
+            }   
+    </style>
 </head>
 <body>
     <div class="container-fluid">
-            <nav class="navbar navbar-expand-lg navbar-expand-sm navbar-light " style="background-color: rgb(238, 194, 197)">
+            <nav class="navbar navbar-expand-lg navbar-expand-sm navbar-light " style="background-color: rgb(238, 194, 197);">
                     <div class="container">
                      <ul class="navbar-nav mr-auto">
-                         <li class="nav-item active"><a class="nav-link" href="">Home</a></li>
+                         <strong>
+                                <li class="nav-item active"><a class="nav-link" href="">Home</a></li>
+                         </strong>
+                         
                      </ul>
                      <ul class="navbar-nav ml-auto">
-                         <li class="nav-item"><a class="nav-link" href="#">contact</a></li>
-                         {% if xyz %}
-                         <li class="nav-item"><a class="nav-link" href="{% url 'one' %}">about</a></li>
-                         {% endif %}
+                            <strong>
+                                {% if register %}
+                                <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
+                                {% endif %}
+                            </strong>
+                            <strong>
+                                {% if about %}
+                                <li class="nav-item"><a class="nav-link" href="{% url 'one' %}">about</a></li>
+                                {% endif %}
+                            </strong>
+                            <strong>
+                                {% if contact %}
+                                <li class="nav-item"><a class="nav-link" href="{% url 'two' %}">contact</a></li>
+                                {% endif %}
+                            </strong>
+                                {% block navextra %}
+                                {% endblock %}
+                            
                      </ul>
                     </div>
              </nav>
@@ -27,6 +70,10 @@
         <div class="jumbotron">
             <h3 style="text-align: center"> Welcome to Mini Amazon</h3>
         </div>
+        <div style="text-align: center" >
+            <a  class="btn btn-success" style="margin: auto;" href="{% url 'login' %}" role=button>LOGIN</a>
+        </div>
+       
         {% endblock %}
     </div>
 </div>
