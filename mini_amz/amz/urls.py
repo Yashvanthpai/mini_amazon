@@ -11,5 +11,6 @@ urlpatterns = [
     url(r'conatact/$',views.contact,name='two'),
     url(r'logedin/$',views.logedin,name='logedin'),
     url(r'inventory/$',views.inventory,name='inventory'),
+    url(r'cart/$',views.cart,name='cart'),
     url(r'^$',views.index,name='index'),
 ]

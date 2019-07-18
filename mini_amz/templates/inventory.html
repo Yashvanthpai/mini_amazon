@@ -32,6 +32,11 @@
             }
 </style>
         {% for key, x in loop.items %}
+        {% if loop|length == 1 %}
+          <div style="margin: auto; margin-top:3% ;text-align: center;">
+                <img src="{{ x.emptyimage|location }}" class="rounded" alt="Cinque Terre" style=" width:35%;height: 35%;"> 
+          </div>
+        {% else %} 
         {% if forloop.counter|modulus:3 == 1%}
             <div class="row" style="margin-top: 10px;">
         {% endif %}
@@ -46,15 +51,16 @@
                   </div>
                   <hr style="height: 1px;">
                   <p style="text-align: center">
-                    <a href="#" class="btn btn-primary" style=" width: 25%; margin: auto;margin-bottom:10px; " onclick="product_edit(this)">Edit</a>
-                    <a href="#" class="btn btn-primary" style=" width: 30%; margin: auto;margin-bottom:10px; ">Remove</a>
-                    <a href="#" class="btn btn-primary" style=" width: 25%; margin: auto;margin-bottom:10px; " onclick="product_info(this)">Info</a>
+                    <a  class="btn btn-primary" style=" width: 25%; margin: auto;margin-bottom:10px;cursor: pointer; " onclick="product_edit(this)">Edit</a>
+                    <a  class="btn btn-primary" style=" width: 30%; margin: auto;margin-bottom:10px;cursor: pointer; " onclick="remove(this)">Remove</a>
+                    <a  class="btn btn-primary" style=" width: 25%; margin: auto;margin-bottom:10px;cursor: pointer; " onclick="product_info(this)">Info</a>
                 </p>
                 </div>
           </div>
           {% if forloop.counter|modulus:3 == 0 %}
             </div>
           {% endif %} 
+          {% endif %}
           {% endfor %}
 
 
@@ -64,14 +70,14 @@
 <div id="back_gg" onclick="closeform()">
 </div>
 <style>
-    #back_gg{
-      position:absolute;
-      background-color:rgba(240, 248, 255, 0.89); 
-      top: 0;
-      left: 0;
-      width: 100%;
-      display: none;
-}
+                      #back_gg{
+                        position:absolute;
+                        background-color:rgba(240, 248, 255, 0.89); 
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        display: none;
+                    }
   </style> 
 
 <!--Product Information form-->
@@ -104,48 +110,83 @@
                </div>
             </div>
      </div>
+     <div id ="delete_button" style="text-align: center; padding: 2%; display: none;">
+      <hr>
+      <a  class="btn btn-warning" onclick="delete_conform()" style="padding:2%;width: 35%; margin: auto;margin-top:10px; cursor: pointer;">CONFORM_DELETE</a>
+   </div>
      
 </div>
+
+<form id="cartdata" method="post"  style=" display: none;" >
+  {% csrf_token %}
+  {{ formcart|crispy }}       
+</form>
+
 <style>
-    #imgdivs{
-      background-color:rgb(255, 255, 255);
-      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-      display: none;
-      position: fixed;
-      top: 5px;
-      left: 25%;
-      width: 70%;
-      height: 99%;
-      padding: 3%;
-        }
+                #imgdivs{
+                  background-color:rgb(255, 255, 255);
+                  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+                  display: none;
+                  position: fixed;
+                  top: 5px;
+                  left: 25%;
+                  width: 70%;
+                  height: 99%;
+                  padding: 3%;
+                    }
 </style>
 <script>
-function closeform(){
-      document.getElementById("back_gg").style.display = "none";
-      document.getElementById("imgdivs").style.display = "none";
-      document.getElementById("postdiv").style.display = "none";
-      document.getElementById("product_edit").style.display = "none";
-}
-function product_info(p) {
-  var arr=['#product_img','#product','#price','#man','#details'];
-  var key = ['img','product','price','man','info']
-  var val ={'img':'','product':'','price':'','man':'','info':''};
-  val[key[0]] = $($($(p).parent()).parent()).find(arr[0]).attr("src")
-  for (var i=1;i<arr.length;i++){
-      val[key[i]] = $($($(p).parent()).parent()).find(arr[i]).text()
-  }
-  console.log(val)
-  console.log($("body").height()+'px')
-   $("#back_gg").css("height", $("body").height()+'px');
-   document.getElementById("back_gg").style.display = "block";
-   document.getElementById("imgdivs").style.display = "block";
-  $("#img_prof2").attr("src",val['img'])
-  $("#pro_name").text(val["product"])
-  $("#pro_price").text(val["price"])
-  $("#pro_info").text(val["info"])
-  $("#man_info").text(val["man"])
-  
-}
+              function closeform(){
+                    document.getElementById("back_gg").style.display = "none";
+                    document.getElementById("imgdivs").style.display = "none";
+                    document.getElementById("postdiv").style.display = "none";
+                    document.getElementById("product_edit").style.display = "none";
+                    $('#delete_button').css('display','none')
+              }
+
+              function product_info(p) {
+                var arr=['#product_img','#product','#price','#man','#details'];
+                var key = ['img','product','price','man','info']
+                var val ={'img':'','product':'','price':'','man':'','info':''};
+                val[key[0]] = $($($(p).parent()).parent()).find(arr[0]).attr("src")
+                for (var i=1;i<arr.length;i++){
+                    val[key[i]] = $($($(p).parent()).parent()).find(arr[i]).text()
+                }
+                console.log(val)
+                console.log($("body").height()+'px')
+                $("#back_gg").css("height", $("body").height()+'px');
+                document.getElementById("back_gg").style.display = "block";
+                document.getElementById("imgdivs").style.display = "block";
+                $("#img_prof2").attr("src",val['img'])
+                $("#pro_name").text(val["product"])
+                $("#pro_price").text(val["price"])
+                $("#pro_info").text(val["info"])
+                $("#man_info").text(val["man"])
+                
+              }
+
+              function remove(p){
+              product_info(p)
+              $('#delete_button').css('display','block')
+              var arr=['#product_img','#product','#price','#man','#details'];
+              var key = ['img','product','price','man','info']
+              var vak ={'img':'','product':'','price':'','man':'','info':''};
+              vak[key[0]] = $($($(p).parent()).parent()).find(arr[0]).attr("src")
+              for (var i=1;i<arr.length;i++){
+                  vak[key[i]] = $($($(p).parent()).parent()).find(arr[i]).text()
+              }
+                $("input[name=Cproduct_name]").val(vak["product"])
+                $("input[name=Cproduct_price]").val(vak["price"])
+                $("input[name=Cproduct_man]").val(vak["man"])
+                $("textarea[name=Cproduct_info]").val(vak["info"])
+                $("input[name=Cproduct_img]").val(vak['img'])
+                
+
+            }
+            function delete_conform(){
+                $('#cartdata').submit()
+                console.log('Cart subbited')
+            }
 </script>
 
 <!--Product editform-->
@@ -165,20 +206,20 @@ function product_info(p) {
         </div>   
 </div>
 <style>
-        #product_edit{
-        overflow: auto;
-        background-color:rgb(255, 255, 255);
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-        display: none;
-        position: fixed;
-        top: 5px;
-        left: 15%;
-        width: 70%;
-        height: 100%;
-        padding: 3%;
-                }
+                #product_edit{
+                overflow: auto;
+                background-color:rgb(255, 255, 255);
+                box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+                display: none;
+                position: fixed;
+                top: 5px;
+                left: 15%;
+                width: 70%;
+                height: 100%;
+                padding: 3%;
+              }
 </style>
-    <script>
+<script>
             function closeEform(){
               document.getElementById("back_gg").style.display = "none";
               document.getElementById("product_edit").style.display = "none";
@@ -209,7 +250,8 @@ function product_info(p) {
               $("textarea[name=Eproduct_info]").val(x["info"])
             }
             
-    </script>
+            
+</script>
 
 <!-- seller form -->
 {% if c_type == 'seller' %}
@@ -228,18 +270,18 @@ function product_info(p) {
 </div>
 
 <style>
-  #postdiv{
-    overflow: auto;
-    background-color:rgb(255, 255, 255);
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    display: none;
-    position: fixed;
-    top: 5px;
-    left: 15%;
-    width: 70%;
-    height: 99%;
-    padding: 3%;
-  }
+            #postdiv{
+              overflow: auto;
+              background-color:rgb(255, 255, 255);
+              box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+              display: none;
+              position: fixed;
+              top: 5px;
+              left: 15%;
+              width: 70%;
+              height: 99%;
+              padding: 3%;
+            }
 </style>
 <script>
 function openpostdiv() {
@@ -248,5 +290,31 @@ function openpostdiv() {
   document.getElementById("postdiv").style.display = "block";
 }
 </script>
+<script>
+
+jQuery(document).ready(function($) {
+
+if (window.history && window.history.pushState) {
+
+  $(window).on('popstate', function() {
+    var hashLocation = location.hash;
+    var hashSplit = hashLocation.split("#!/");
+    var hashName = hashSplit[1];
+
+    if (hashName !== '') {
+      var hash = window.location.hash;
+      if (hash === '') {
+          window.location="{% url 'logedin' %}";
+          return false;
+      }
+    }
+  });
+
+  window.history.pushState('forward', null, '');
+}
+
+});
+    
+    </script>
 {% endif %}
 {% endblock %}

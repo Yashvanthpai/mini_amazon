@@ -1,0 +1,207 @@
+{% extends 'index.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load custum %}
+{% block navextra %}
+<strong>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-user" style="margin-right: 15px;"></i><strong>{{user.username}}</strong>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item" href="{% url 'two' %}">Contact</a>
+            <a class="dropdown-item" href="{% url 'one' %}">About</a>
+            <a class="dropdown-item" href="{% url 'logout' %}">LOGOUT</a>
+        </div>
+    </li>
+</strong>
+{% endblock %}
+{% block body %}
+<style>
+                                #back_gg{
+                                position:absolute;
+                                background-color:rgba(240, 248, 255, 0.89); 
+                                top: 0;
+                                left: 0;
+                                width: 100%;
+                                display: none;
+                                }
+</style>
+        
+          {% for key, x in loop.items %}
+          {% if loop|length == 1 %}
+          <div style="margin: auto; margin-top:3% ;text-align: center;">
+                <img src="{{ x.emptyimage|location }}" class="rounded" alt="Cinque Terre" style=" width:35%;height: 35%;"> 
+          </div>
+          {% else %} 
+                {% if forloop.counter|modulus:3 == 1%}
+                    <div class="row" style="margin-top: 10px;">
+                {% endif %}
+                <div class="col-4" >
+                        <div class="card" style=" margin: 3%; height: 100%">
+                            <div  style="cursor: pointer; height: 100%" onclick="product_info(this)">
+                                <img id='product_img' src="{{ x.product_img }}" class="card-img-top" style=" display: block;width: 150px ;height: 150px;padding:5%; margin: auto" alt="No img">
+                                <div class="card-body">
+                                    <p style="text-align:left;margin-left:2%;">
+                                    <strong id="product">{{x.Product_name}}</strong><span style="float:right;" id="price">{{x.product_price}}</span>
+                                    <p style="text-align:left;margin-left:2%;">
+                                    <strong>Manufacturur:</strong><span style="float:right;" id="man">{{x.product_man}}</span>
+                                    <p class="card-text" id='details' style="height: 100%; overflow: auto;margin-left:2%; ">{{x.product_info}}</p>
+                                </div>      
+                            </div>
+
+                        <hr style="height: 1px;">
+                        <div style="text-align: center;padding: 0%">
+                            <a  class="btn btn-primary" style=" width: 40%; margin: auto;margin-bottom:10px; cursor: pointer;">Proced to pay</a>
+                            <a  class="btn btn-primary" onclick="remove(this)" style=" width: 50%; margin: auto;margin-bottom:10px; cursor: pointer;"  >Remove from Cart</a>
+                        </div>
+                        </div>
+                </div>
+                {% if forloop.counter|modulus:3 == 0 %}
+                    </div>
+                {% endif %} 
+          {% endif %} 
+          {% endfor %}
+
+
+          {% if loop|length|modulus:3 != 0 %}
+            </div>
+          {% endif %} 
+          
+<div id="back_gg" onclick="closeform()">
+</div>
+<!--Product Information form-->
+<div class="container" id="imgdivs" style="width: 60%; margin:auto; background-color: rgba(255, 255, 255, 0.966);margin-bottom:70px;  ">
+        <button type="button" class="close" aria-label="Close" style="padding:2%;" onclick="closeform()">
+            <span aria-hidden="true">&times;</span>
+         </button>
+         <div style="width:35%;height: 35%; ;margin: auto;padding: 20px;" >
+            <img id="img_prof2" style="width: 90%; height: 100%; " src="" class="img-thumbnail" alt="Cinque Terre"> 
+        </div>
+        <hr>
+        <p style="text-align:left;font-size:30px;margin-left:2%;"><strong id='pro_name'>Iphone</strong><span style="float:right;font-size:30px" id='pro_price'>$77542</span>
+        </p>
+        <hr>
+        <div class="container" style="width: 75%; ">
+          <div class="row">
+            <div class="col-4" >
+                <p style="font-size: 20px;">Manufacturur</p>
+              </div>
+              <div class="col-8" >
+                  <p style="font-size: 20px;" id='man_info'>Rnsit</p>
+               </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    <p style="font-size: 20px;">Product Description</p>
+                  </div>
+                  <div class="col-8" >
+                      <p style="font-size: 20px;" id='pro_info'>This way it doesn't matter how much content you put inside your box/wrapper/div , it will make the page height bigger without having to change </p>
+                   </div>
+                </div>
+         </div>
+         <div id ="delete_button" style="text-align: center; padding: 2%; display: none;">
+          <hr>
+          <a  class="btn btn-warning" onclick="delete_conform()" style="padding:2%;width: 35%; margin: auto;margin-top:10px; cursor: pointer;">CONFORM_DELETE</a>
+       </div>
+         
+    </div>
+    
+    <form id="cartdata" method="post"  style=" display: none;" >
+      {% csrf_token %}
+      {{ form|crispy }}       
+    </form>
+    
+    <style>
+                    #imgdivs{
+                      background-color:rgb(255, 255, 255);
+                      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+                      display: none;
+                      position: fixed;
+                      top: 5px;
+                      left: 25%;
+                      width: 70%;
+                      height: 99%;
+                      padding: 3%;
+                        }
+    </style>
+    <script>
+                  function closeform(){
+                        document.getElementById("back_gg").style.display = "none";
+                        document.getElementById("imgdivs").style.display = "none";
+                        document.getElementById("postdiv").style.display = "none";
+                        document.getElementById("product_edit").style.display = "none";
+                        $('#delete_button').css('display','none')
+                  }
+    
+                  function product_info(p) {
+                    var arr=['#product_img','#product','#price','#man','#details'];
+                    var key = ['img','product','price','man','info']
+                    var val ={'img':'','product':'','price':'','man':'','info':''};
+                    val[key[0]] = $($($(p).parent()).parent()).find(arr[0]).attr("src")
+                    for (var i=1;i<arr.length;i++){
+                        val[key[i]] = $($($(p).parent()).parent()).find(arr[i]).text()
+                    }
+                    console.log(val)
+                    console.log($("body").height()+'px')
+                    $("#back_gg").css("height", $("body").height()+'px');
+                    document.getElementById("back_gg").style.display = "block";
+                    document.getElementById("imgdivs").style.display = "block";
+                    $("#img_prof2").attr("src",val['img'])
+                    $("#pro_name").text(val["product"])
+                    $("#pro_price").text(val["price"])
+                    $("#pro_info").text(val["info"])
+                    $("#man_info").text(val["man"])
+                    
+                  }
+    
+                  function remove(p){
+                  product_info(p)
+                  $('#delete_button').css('display','block')
+                  var arr=['#product_img','#product','#price','#man','#details'];
+                  var key = ['img','product','price','man','info']
+                  var vak ={'img':'','product':'','price':'','man':'','info':''};
+                  vak[key[0]] = $($($(p).parent()).parent()).find(arr[0]).attr("src")
+                  for (var i=1;i<arr.length;i++){
+                      vak[key[i]] = $($($(p).parent()).parent()).find(arr[i]).text()
+                  }
+                    $("input[name=Cproduct_name]").val(vak["product"])
+                    $("input[name=Cproduct_price]").val(vak["price"])
+                    $("input[name=Cproduct_man]").val(vak["man"])
+                    $("textarea[name=Cproduct_info]").val(vak["info"])
+                    $("input[name=Cproduct_img]").val(vak['img'])
+                    console.log(vak)
+    
+                }
+                function delete_conform(){
+                    $('#cartdata').submit()
+                    console.log('Cart subbited')
+                }
+    </script>
+    <script>
+jQuery(document).ready(function($) {
+
+if (window.history && window.history.pushState) {
+
+  $(window).on('popstate', function() {
+    var hashLocation = location.hash;
+    var hashSplit = hashLocation.split("#!/");
+    var hashName = hashSplit[1];
+
+    if (hashName !== '') {
+      var hash = window.location.hash;
+      if (hash === '') {
+          window.location="{% url 'logedin' %}";
+          return false;
+      }
+    }
+  });
+
+  window.history.pushState('forward', null, '');
+}
+
+});
+    
+    </script>
+
+{% endblock %}

@@ -5,10 +5,10 @@
 {% block navextra %}
     {% if c_type == 'seller' %}
     <strong>
-        <li class="nav-item"><a class='nav-link'href="{% url 'inventory' %}">Inventry</a></li>
+        <li class="nav-item"><a class='nav-link' href="{% url 'inventory' %}">Inventry</a></li>
     </strong>
      <strong>
-        <li class="nav-item"><a class='nav-link'href="#" onclick="openpostdiv()">Sale</a></li>
+        <li class="nav-item"><a class='nav-link' href="#" onclick="openpostdiv()">Sale</a></li>
     </strong>
     {% endif %}
     <strong>
@@ -17,6 +17,7 @@
                 <i class="fas fa-user" style="margin-right: 15px;"></i><strong>{{user.username}}</strong>
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="{% url 'cart' %}">Cart</a>
                 <a class="dropdown-item" href="{% url 'two' %}">Contact</a>
                 <a class="dropdown-item" href="{% url 'one' %}">About</a>
                 <a class="dropdown-item" href="{% url 'logout' %}">LOGOUT</a>
@@ -26,40 +27,51 @@
 {% endblock %}
 {% block body %}
 <style>
-  #back_gg{
-  position:absolute;
-  background-color:rgba(240, 248, 255, 0.89); 
-  top: 0;
-  left: 0;
-  width: 100%;
-  display: none;
-}
-#imgdivs{
-              box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-              display: none;
-              position: fixed;
-              top: 2%;
-              left: 25%;
-              height: 100%;
-              overflow: auto;
+              #back_gg{
+                position:absolute;
+                background-color:rgba(240, 248, 255, 0.89); 
+                top: 0;
+                left: 0;
+                width: 100%;
+                display: none;
+              }
+              #imgdivs{
+                box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+                display: none;
+                position: fixed;
+                top: 2%;
+                left: 25%;
+                height: 100%;
+                overflow: auto;
             }
 </style>
         {% for key, x in loop.items %}
           {% if forloop.counter|modulus:3 == 1%}
               <div class="row" style="margin-top: 10px;">
           {% endif %}
-          <div class="col-4" style="cursor: pointer" onclick="product_info(this)">
+          <div class="col-4" >
                 <div class="card" style=" margin: 3%; height: 100%">
-                  <img id='product_img' src="{{ x.product_img|location }}" class="card-img-top" style="width: 150px ;height: 150px;padding:5%; margin: auto" alt="No img">
-                    <div class="card-body">
-                      <p style="text-align:left;margin-left:2%;">
-                      <strong id="product">{{x.Product_name}}</strong><span style="float:right;" id="price">{{x.product_price}}</span>
-                      <p style="text-align:left;margin-left:2%;">
-                      <strong >Manufacturur:</strong><span style="float:right;" id="man">{{x.product_man}}</span>
-                      <p class="card-text" id='details' style="height: 100%; overflow: auto;margin-left:2%; ">{{x.product_info}}</p>
+                    <div  style="cursor: pointer; height: 100%" onclick="product_info(this)">
+                        <img id='product_img' src="{{ x.product_img|location }}" class="card-img-top" style=" display: block;width: 150px ;height: 150px;padding:5%; margin: auto" alt="No img">
+                          <div class="card-body">
+                            <p style="text-align:left;margin-left:2%;">
+                            <strong id="product">{{x.Product_name}}</strong><span style="float:right;" id="price">{{x.product_price}}</span>
+                            <p style="text-align:left;margin-left:2%;">
+                            <strong>Manufacturur:</strong><span style="float:right;" id="man">{{x.product_man}}</span>
+                            <p class="card-text" id='details' style="height: 100%; overflow: auto;margin-left:2%; ">{{x.product_info}}</p>
+                          </div>      
                     </div>
-                  <hr style="height: 1px;">
-                  <a href="#" class="btn btn-primary" style=" width: 35%; margin: auto;margin-bottom:10px; ">BUY</a>
+
+                 <hr style="height: 1px;">
+                  <div style="text-align: center;padding: 2%">
+                    {% if x.cart == '' %}
+                    <a  class="btn btn-primary" style=" width: 35%; margin: auto;margin-bottom:10px; cursor: pointer;">BUY</a>
+                    <a  class="btn btn-primary" onclick="xyz(this)" style=" width: 35%; margin: auto;margin-bottom:10px; cursor: pointer;" >Add to Cart</a>
+                    {% endif %}
+                    {% if x.cart == 'yes' %}
+                    <a href="{% url 'cart' %}" class="btn btn-primary" style=" width: 35%; margin: auto;margin-bottom:10px; cursor: pointer;">View Cart</a>
+                    {% endif %}
+                 </div>
                 </div>
           </div>
           {% if forloop.counter|modulus:3 == 0 %}
@@ -105,14 +117,38 @@
      </div>
       
      <hr> 
-     <div style="text-align: center;padding: 2%">
-        <a href="#" class="btn btn-primary" style=" width: 35%; margin: auto;margin-bottom:10px; ">BUY</a>
-        <a href="#" class="btn btn-primary" style=" width: 35%; margin: auto;margin-bottom:10px; ">Add to Cart</a>
-     </div>
      
 </div>
 
+<form id="cartdata" method="post"  style=" display: none;" >
+      {% csrf_token %}
+      {{ formcart|crispy }}       
+</form>
+
 <script>
+
+function xyz(pval) {
+console.log("in opclick");
+var p = $($(pval).parent()).parent()
+vak={'img':'','product':'','price':'','man':'','info':''}
+vak['img']=$(p).find('#product_img').attr('src')
+vak['product']=$(p).find('#product').text()
+vak['price']=$(p).find('#price').text()
+vak['man']=$(p).find('#man').text()
+vak['info']=$(p).find('#details').text()
+
+console.log(vak["product"])
+$("input[name=Cproduct_name]").val(vak["product"])
+$("input[name=Cproduct_price]").val(vak["price"])
+$("input[name=Cproduct_man]").val(vak["man"])
+$("textarea[name=Cproduct_info]").val(vak["info"])
+$("input[name=Cproduct_img]").val(vak['img'])
+console.log("In cart submit")
+console.log($("input[name=Cproduct_name]").val())
+$('#cartdata').submit()
+console.log('Cart subbited')
+}
+
 function closeform(){
   document.getElementById("back_gg").style.display = "none";
   document.getElementById("imgdivs").style.display = "none";
@@ -184,3 +220,4 @@ function openpostdiv() {
 </script>
 {% endif %}
 {% endblock %}
+
